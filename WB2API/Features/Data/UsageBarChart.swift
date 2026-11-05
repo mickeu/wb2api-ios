@@ -19,7 +19,7 @@ struct UsageBarChart: View {
     /// 给尾注留出空间，避免最长的柱子和数值顶出画布。
     private var xUpperBound: Double {
         let maximum = items.map { metric.value(of: $0) }.max() ?? 0
-        return max(maximum * 1.25, 1)
+        return max(maximum * 1.6, 1)
     }
 
     var body: some View {
@@ -106,15 +106,20 @@ struct UsageBarChart: View {
         }
         .chartXAxis(.hidden)
         .chartLegend(.hidden)
+        .chartYAxis {
+            AxisMarks(position: .leading) { _ in
+                AxisValueLabel()
+                    .font(.caption2)
+            }
+        }
         .chartXScale(domain: 0...xUpperBound)
         .frame(height: CGFloat(items.count) * rowHeight + Metrics.l)
         .accessibilityLabel(title)
     }
 
-    /// 类目标签过长会挤掉柱体，截断后仍保留可辨识前缀。
-    /// 账号维度用昵称（key 是 uid），域维度用中文名。
+    /// 保留完整名称：模型名是唯一的辨识依据，截断后无法区分同前缀的型号。
+    /// 过长时交给坐标轴缩字号，不在这里砍字符。
     private func label(for group: UsageGroup) -> String {
-        let raw = group.displayName
-        return raw.count > 12 ? String(raw.prefix(11)) + "…" : raw
+        group.displayName
     }
 }
