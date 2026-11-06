@@ -106,8 +106,10 @@ struct UsageBarChart: View {
         }
         .chartXAxis(.hidden)
         .chartLegend(.hidden)
+        // 保留默认网格线，只把轴标签缩小，避免长模型名挤占柱体宽度
         .chartYAxis {
             AxisMarks(position: .leading) { _ in
+                AxisGridLine()
                 AxisValueLabel()
                     .font(.caption2)
             }
